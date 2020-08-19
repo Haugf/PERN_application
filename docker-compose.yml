@@ -1,0 +1,78 @@
+version: "3"
+
+# Volumes are used to persist data. This is for our Postgres database. https://docs.docker.com/storage/volumes/
+volumes:
+  postgres_data: {}
+
+services:
+
+  backend:
+    build:
+      # context is the file location from where other files are relative to. In this case, the location of docker-compose.yml.
+      context: .
+      dockerfile: ./docker_compose/backend/Dockerfile
+    image: backend # the name of the docker image we are creating
+    depends_on:
+      - postgres
+    # Volumes will always be mounted. Kubernetes can overwrite the mount point and write to specified volume. Can leave this in for docker-compose compatibility.
+    # An empty/not used volume will be created in the event of Kubernetes overwrite. This is not an issue as it is negligible.
+    volumes: # mount the backend folder to a new client folder in container to allow for hot-reloading NOT SETUP could use https://medium.com/better-programming/docker-in-development-with-nodemon-d500366e74df
+      - ./backend:/backend
+    # Environment variables will be set for the container from these files. These environment variables can be overwritten by Kubernetes env or envFrom fields.
+    # Kubernetes does not get these environment variables. They will need to be added again.
+    env_file:
+      - ./.envs/.backend
+      - ./.envs/.postgres
+    # Kubernetes will see the exposed port
+    # used to define the mapping between the host server and Docker container. application_port:docker_container_port
+    ports:
+      - "8000:8000"
+    # Use a script to allow for hot-reloading with container via mounting
+    # If node_modules folder already exists, delete it
+    # copy node_modules folder from image
+    # Note: command overwrite 'CMD' in dockerfiles and is run when image is started.
+    command: sh -c '
+      if test -d node_modules;
+      then
+      echo deleting_existing_node_modules;
+      rm -rf node_modules;
+      fi &&
+      cp -a /tmp/node_modules /backend
+      &&
+      npm start'
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./docker_compose/postgres/Dockerfile
+    image: postgres
+    volumes: #/var/lib/postgresql/data is used because postgress needs some directory depth (will break otherwise)
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.envs/.postgres
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker_compose/frontend/Dockerfile
+    image: frontend
+    volumes: # mount the frontend folder to a new client folder in container to allow for hot-reloading
+      - ./frontend:/frontend
+    env_file:
+      - ./.envs/.frontend
+    ports:
+      - "8080:8080"
+    # Use a script to allow for hot-reloading with container via mounting
+    # If node_modules folder already exists, delete it
+    # copy node_modules folder from image
+    # Note: command overwrite 'CMD' in dockerfiles and is run when image is started.
+    command: sh -c '
+      if test -d node_modules;
+      then
+      echo deleting_existing_node_modules;
+      rm -rf node_modules;
+      fi &&
+      cp -a /tmp/node_modules /frontend
+      &&
+      npm start '
+
