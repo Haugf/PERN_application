@@ -1,0 +1,4 @@
+env.sh is used to allow environment variables to be used at runtime in the React app since React sets process.env values as buildtime.
+env.sh will allow use of env variables using the format window.env.ENV_VAR_NAME in your React app.
+env.sh creates a env-config.js file populated with by env-variable info which must be run so that the browser has env variables. ex. place <script src="/env-config.js"></script> at top of index.html
+env.sh will ONLY use the env variables specified in the .env file. The .env file must have default values, which will be overwritten by the system's/container's environment variables

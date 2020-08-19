@@ -1,0 +1,37 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "babel": {
+    "presets": [
+      "@babel/preset-react"
+    ]
+  },
+  "dependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/preset-react": "^7.7.4",
+    "@material-ui/core": "^4.7.0",
+    "@material-ui/icons": "^4.5.1",
+    "babel-loader": "^8.0.6",
+    "clsx": "^1.0.4",
+    "html-webpack-plugin": "^3.2.0",
+    "path": "^0.12.7",
+    "prop-types": "^15.7.2",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-router-dom": "^5.1.2",
+    "shortid": "^2.2.15",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  },
+  "scripts": {
+    "start": "chmod +x ./env.sh && ./env.sh && webpack-dev-server --host 0.0.0.0 --open --disable-host-check",
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

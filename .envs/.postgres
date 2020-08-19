@@ -1,0 +1,9 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+# The above refers to the name of the postgres container since using docker-compose
+# This is because docker-compose creates a user-defined network. Kubernetes also does this.
+POSTGRES_PORT=5432
+POSTGRES_DB=pern_fullstack
+POSTGRES_USER=test1
+POSTGRES_PASSWORD=test1
